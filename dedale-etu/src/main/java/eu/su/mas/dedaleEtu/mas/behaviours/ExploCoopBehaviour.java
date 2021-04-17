@@ -69,9 +69,8 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
  * @param myMap known map of the world the agent is living in
  * @param agentNames name of the agents to share the map with
  */
-	public ExploCoopBehaviour(final AbstractDedaleAgent myagent, MapRepresentation myMap,List<String> agentNames) {
+	public ExploCoopBehaviour(final AbstractDedaleAgent myagent,List<String> agentNames) {
 		super(myagent);
-		this.myMap=myMap;
 		this.list_agentNames=agentNames;
 		//this.list_agentNames=getAgentsList();
 		
@@ -84,9 +83,6 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 	    
 		if(this.myMap==null) {
 			this.myMap= new MapRepresentation();
-		}
-		else {
-			this.myMap = ((ExploreCoopAgent)this.myAgent).getMyMap();
 		}
 
 		//0) Retrieve the current position
@@ -182,7 +178,8 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 					this.myMap.mergeMap(sgreceived);
 					//this.mapSendedMemory.put(msgReceived.getSender().getLocalName(),sgreceived);
 				}*/
-				((ExploreCoopAgent)this.myAgent).setMyMap(this.myMap);
+				this.myAgent.addBehaviour(new SayHelloBehaviour(this.myAgent,list_agentNames));
+				this.myAgent.addBehaviour(new IAmHereBehaviour(this.myAgent,list_agentNames,this.myMap));
 				((AbstractDedaleAgent)this.myAgent).moveTo(nextNode);
 			}
 

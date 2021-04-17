@@ -38,17 +38,6 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 public class ExploreCoopAgent extends AbstractDedaleAgent {
 
 	private static final long serialVersionUID = -7969469610241668140L;
-	private MapRepresentation myMap;
-	
-
-	public MapRepresentation getMyMap() {
-		return myMap;
-	}
-
-	public void setMyMap(MapRepresentation myMap) {
-		this.myMap = myMap;
-	}
-
 	/**
 	 * This method is automatically called when "agent".start() is executed.
 	 * Consider that Agent is launched for the first time. 
@@ -84,9 +73,8 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 		 * 
 		 ************************************************/
 		
-		lb.add(new ExploCoopBehaviour(this,this.myMap,list_agentNames));
-		lb.add(new SayHelloBehaviour(this,list_agentNames));
-		lb.add(new IAmHereBehaviour(this,list_agentNames));
+		lb.add(new ExploCoopBehaviour(this,list_agentNames));
+
 
 
 		

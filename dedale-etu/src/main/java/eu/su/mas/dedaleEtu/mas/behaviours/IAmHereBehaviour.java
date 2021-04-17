@@ -23,15 +23,18 @@ public class IAmHereBehaviour extends TickerBehaviour{
 	 */
 	private static final long serialVersionUID = -2058134622078521998L;
 	private List<String> receivers ;
+	private MapRepresentation myMap;
+
 
 	/**
 	 * An agent tries to contact its friend and to give him its current position
 	 * @param myagent the agent who posses the behaviour
 	 *  
 	 */
-	public IAmHereBehaviour (final Agent myagent , List<String> receivers) {
+	public IAmHereBehaviour (final Agent myagent , List<String> receivers , MapRepresentation myMap ) {
 		super(myagent, 3000); //String []reciver en parametre
 		this.receivers=receivers;	
+		this.myMap = myMap ; 
 	}
 
 	@Override
@@ -43,8 +46,8 @@ public class IAmHereBehaviour extends TickerBehaviour{
 		if (msg != null) {
 			msg.getContent();
 			System.out.println(this.myAgent.getLocalName()+"Received response from "+msg.getSender().getLocalName());
-			this.myAgent.addBehaviour(new ShareMapBehaviour(this.myAgent, ((ExploreCoopAgent)this.myAgent).getMyMap(), this.receivers));
-			this.myAgent.addBehaviour(new receiveAndUpdateMapBehaviour(this.myAgent,((ExploreCoopAgent)this.myAgent).getMyMap()));/*
+			this.myAgent.addBehaviour(new ShareMapBehaviour(this.myAgent, this.myMap, this.receivers));
+			this.myAgent.addBehaviour(new receiveAndUpdateMapBehaviour(this.myAgent,this.myMap));/*
 			String message[] = msg.getContent().split(",");
 			String otherAgentPos = message[0];
 			String otherAgentNextNode = "";

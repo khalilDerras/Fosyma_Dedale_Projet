@@ -41,7 +41,6 @@ public class receiveAndUpdateMapBehaviour extends SimpleBehaviour {
 			System.out.println(this.myMap.getClosedNodes().size());
 
 		}
-		((ExploreCoopAgent)this.myAgent).setMyMap(this.myMap);
 		finished = true ;
 		
 	}
