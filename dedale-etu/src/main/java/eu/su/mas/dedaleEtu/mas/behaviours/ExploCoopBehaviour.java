@@ -119,6 +119,13 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 			//3) while openNodes is not empty, continues.
 			if (!this.myMap.hasOpenNode()){
 				//Explo finished
+				List<Behaviour> lb = ((ExploreCoopAgent)this.myAgent).getLB();
+			    for (Behaviour b : lb) {
+			    	if (! b.getBehaviourName().equals("ExploCoopBehaviour")) {
+			    		System.out.println(b.getBehaviourName());
+			    		this.myAgent.removeBehaviour(b);
+			    	}
+			      }
 				finished=true;
 				System.out.println(this.myAgent.getLocalName()+" - Exploration successufully done, behaviour removed.");
 			}else{
@@ -134,6 +141,7 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 						List<String> openNodes = this.myMap.getOpenNodes();
 						if(openNodes.size()>0) {
 							nextNode = this.myMap.getShortestPath(myPosition,openNodes.get(r.nextInt(openNodes.size()))).get(0);
+							System.out.println("this is the next node "+nextNode);
 						}
 						((ExploreCoopAgent)this.myAgent).setRandom(rand-1);
 					}
