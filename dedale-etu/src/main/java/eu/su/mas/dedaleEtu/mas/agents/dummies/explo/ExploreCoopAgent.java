@@ -38,6 +38,7 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 public class ExploreCoopAgent extends AbstractDedaleAgent {
 
 	private static final long serialVersionUID = -7969469610241668140L;
+	private int random = 0 ;
 	/**
 	 * This method is automatically called when "agent".start() is executed.
 	 * Consider that Agent is launched for the first time. 
@@ -110,6 +111,14 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 		}
 		}
 		return agentsNames;
+	}
+
+	public int getRandom() {
+		return random;
+	}
+
+	public void setRandom(int random) {
+		this.random = random;
 	}
 	
 }

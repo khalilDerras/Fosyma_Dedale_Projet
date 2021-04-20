@@ -84,7 +84,6 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 		if(this.myMap==null) {
 			this.myMap= new MapRepresentation();
 		}
-
 		//0) Retrieve the current position
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
 
@@ -129,7 +128,16 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 				if (nextNode==null){
 					//no directly accessible openNode
 					//chose one, compute the path and take the first step.
-					nextNode=this.myMap.getShortestPathToClosestOpenNode(myPosition).get(0);//getShortestPath(myPosition,this.openNodes.get(0)).get(0);
+					int rand=((ExploreCoopAgent)this.myAgent).getRandom();
+					if(rand>0) {
+						Random r = new Random();
+						List<String> openNodes = this.myMap.getOpenNodes();
+						if(openNodes.size()>0) {
+							nextNode = this.myMap.getShortestPath(myPosition,openNodes.get(r.nextInt(openNodes.size()))).get(0);
+						}
+						((ExploreCoopAgent)this.myAgent).setRandom(rand-1);
+					}
+					else nextNode=this.myMap.getShortestPathToClosestOpenNode(myPosition).get(0);//getShortestPath(myPosition,this.openNodes.get(0)).get(0);
 					//System.out.println(this.myAgent.getLocalName()+"-- list= "+this.myMap.getOpenNodes()+"| nextNode: "+nextNode);
 					//List<String> openNodes =this.myMap.getOpenNodes();
 					//Random r = new Random();

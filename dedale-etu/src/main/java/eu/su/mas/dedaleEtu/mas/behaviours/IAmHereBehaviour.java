@@ -44,6 +44,7 @@ public class IAmHereBehaviour extends TickerBehaviour{
 
 		final ACLMessage msg = this.myAgent.receive(msgTemplate);
 		if (msg != null) {
+			((ExploreCoopAgent)this.myAgent).setRandom(5);
 			msg.getContent();
 			System.out.println(this.myAgent.getLocalName()+"Received response from "+msg.getSender().getLocalName());
 			this.myAgent.addBehaviour(new ShareMapBehaviour(this.myAgent, this.myMap, this.receivers));
