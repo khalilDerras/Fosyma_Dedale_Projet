@@ -3,6 +3,8 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.explo;
 import java.util.ArrayList;
 import java.util.List;
 
+import dataStructures.tuple.Couple;
+import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
 
@@ -40,6 +42,8 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 	private static final long serialVersionUID = -7969469610241668140L;
 	private int random = 0 ;
 	private List<Behaviour> lb;
+	private String wumpusPos = null;
+	private boolean onStench = false;
 
 	/**
 	 * This method is automatically called when "agent".start() is executed.
@@ -125,5 +129,38 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 
 	public List<Behaviour> getLB(){
 		return this.lb;
+	}
+	public List<String> getStench() {
+		
+		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=this.observe();//myPosition
+		List<String> tmp = new ArrayList<String>();
+		for(Couple<String,List<Couple<Observation,Integer>>> po:lobs){
+			for(Couple<Observation,Integer> o:po.getRight()) {
+				if(o.getLeft().equals(Observation.STENCH)) {
+					tmp.add(po.getLeft()) ;
+				}
+			}
+		}
+		return tmp;		
+	}
+	public String getWumpusPos() {
+		return wumpusPos;
+	}
+
+	public void setWumpusPos(String wumpusPos) {
+		this.wumpusPos = wumpusPos;
+	}
+
+	public boolean isOnStench() {
+		String wumpusPos = this.getWumpusPos();
+		String myPosition=((AbstractDedaleAgent)this).getCurrentPosition();
+		if (wumpusPos == null) return false;
+		else {
+			return myPosition.compareTo(wumpusPos)==0;
+		}
+	}
+
+	public void setOnStench(boolean onStench) {
+		this.onStench = onStench;
 	}
 }

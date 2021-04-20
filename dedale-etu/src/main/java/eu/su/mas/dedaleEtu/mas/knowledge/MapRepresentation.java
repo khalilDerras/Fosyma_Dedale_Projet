@@ -16,6 +16,7 @@ import org.graphstream.graph.ElementNotFoundException;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.Path;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.view.Viewer;
@@ -156,6 +157,42 @@ public class MapRepresentation implements Serializable {
 		}
 		return shortestPath;
 	}
+	
+	public synchronized List<String> getLongestPath(String idFrom,String idTo){
+		List<String> shortestPath=new ArrayList<String>();
+
+		Dijkstra dijkstra = new Dijkstra();//number of edge
+		dijkstra.init(g);
+		dijkstra.setSource(g.getNode(idFrom));
+		dijkstra.compute();//compute the distance to all nodes from idFrom
+		Iterable<Path> paths=dijkstra.getAllPaths(g.getNode(idTo));
+		int max = 0;
+		Iterator<Path> iterr=paths.iterator();
+		List<Node> path = null;
+		List<Node> tmp;
+
+		while (iterr.hasNext()){
+			tmp = iterr.next().getNodePath();
+			if (tmp.size()>max) {
+				path = tmp ;
+				max = tmp.size();
+			}
+		}
+		//List<Node> path=dijkstra.getPath(g.getNode(idTo)).getNodePath(); //the shortest path from idFrom to idTo
+		if(path!=null) {
+			Iterator<Node> iter=path.iterator();
+			while (iter.hasNext()){
+				shortestPath.add(iter.next().getId());
+			}
+			dijkstra.clear();
+			if (shortestPath.isEmpty()) {//The openNode is not currently reachable
+				return null;
+			}else {
+				shortestPath.remove(0);//remove the current position
+			}
+		}
+		return shortestPath;
+	}
 
 	public List<String> getShortestPathToClosestOpenNode(String myPosition) {
 		//1) Get all openNodes
@@ -172,8 +209,6 @@ public class MapRepresentation implements Serializable {
 
 		return getShortestPath(myPosition,closest.get().getLeft());
 	}
-
-
 
 	public List<String> getOpenNodes(){
 		return this.g.nodes()

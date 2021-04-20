@@ -69,7 +69,7 @@ public class ShareMapBehaviour extends SimpleBehaviour{
 			e.printStackTrace();
 		}
 		((AbstractDedaleAgent)this.myAgent).sendMessage(msg);
-		System.out.println(this.myAgent.getLocalName()+" Map Sended");
+		//System.out.println(this.myAgent.getLocalName()+" Map Sended");
 		finished = true;
 
 		

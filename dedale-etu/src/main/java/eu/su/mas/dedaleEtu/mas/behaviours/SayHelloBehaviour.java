@@ -46,12 +46,23 @@ public class SayHelloBehaviour extends SimpleBehaviour{
 		msg.setProtocol("HelloProtocol");
 
 		if (myPosition!=""){
+			List<String> wumpusPoss = ((ExploreCoopAgent)this.myAgent).getStench();
+			if(wumpusPoss.size()>0) {
+				System.out.println(((ExploreCoopAgent)this.myAgent).observe().toString());
+				System.out.println(wumpusPoss.toString());
+				System.out.println(this.myAgent.getLocalName() +" found golem");
+				if (wumpusPoss.contains(myPosition)) {
+					((ExploreCoopAgent)this.myAgent).setWumpusPos(myPosition);
+				}
+				else ((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPoss.get(0));
+			}
+			else if (((ExploreCoopAgent)this.myAgent).isOnStench()) ((ExploreCoopAgent)this.myAgent).setWumpusPos(null);
 			//System.out.println("Agent "+this.myAgent.getLocalName()+ " is trying to reach its friends");
 			msg.setContent(myPosition);
 			for (String agentName : receivers) {
 				msg.addReceiver(new AID(agentName,AID.ISLOCALNAME));
 			}
-			System.out.println(this.myAgent.getLocalName() + " is checking if anybody near him");
+			//System.out.println(this.myAgent.getLocalName() + " is checking if anybody near him");
 			
 
 			//Mandatory to use this method (it takes into account the environment to decide if someone is reachable or not)

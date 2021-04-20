@@ -35,10 +35,10 @@ public class receiveAndUpdateMapBehaviour extends SimpleBehaviour {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println(this.myMap.getClosedNodes().size());
+			//System.out.println(this.myMap.getClosedNodes().size());
 			this.myMap.mergeMap(sgreceived);
-			System.out.println(this.myAgent.getLocalName()+" Map Recieved And Updated");
-			System.out.println(this.myMap.getClosedNodes().size());
+			//System.out.println(this.myAgent.getLocalName()+" Map Recieved And Updated");
+			//System.out.println(this.myMap.getClosedNodes().size());
 
 		}
 		finished = true ;

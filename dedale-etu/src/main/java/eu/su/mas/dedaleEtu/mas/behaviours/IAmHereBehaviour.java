@@ -7,6 +7,7 @@ import eu.su.mas.dedaleEtu.mas.agents.dummies.explo.ExploreCoopAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -48,10 +49,18 @@ public class IAmHereBehaviour extends SimpleBehaviour{
 		final ACLMessage msg = this.myAgent.receive(msgTemplate);
 		if (msg != null) {
 			((ExploreCoopAgent)this.myAgent).setRandom(2);
-			msg.getContent();
-			System.out.println(this.myAgent.getLocalName()+"Received response from "+msg.getSender().getLocalName());
+			String c = msg.getContent();
+			String t = ((ExploreCoopAgent)this.myAgent).getWumpusPos() ;
+			if (t != null && c!=null) 
+				if (c.compareTo(t)==0) {
+					System.out.println("ooh he's already there");
+					((ExploreCoopAgent)this.myAgent).setWumpusPos(null); //predict
+				}
+			//System.out.println(this.myAgent.getLocalName()+"Received response from "+msg.getSender().getLocalName());
 			this.myAgent.addBehaviour(new ShareMapBehaviour(this.myAgent, this.myMap, this.receivers));
 			this.myAgent.addBehaviour(new receiveAndUpdateMapBehaviour(this.myAgent,this.myMap));
+			this.myAgent.addBehaviour(new ShareWumpusBehaviour(this.myAgent, this.myMap, this.receivers));
+
 		}
 		finished=true;
 
