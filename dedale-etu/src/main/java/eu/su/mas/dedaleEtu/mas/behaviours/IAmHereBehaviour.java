@@ -50,12 +50,12 @@ public class IAmHereBehaviour extends SimpleBehaviour{
 		if (msg != null) {
 			((ExploreCoopAgent)this.myAgent).setRandom(2);
 			String c = msg.getContent();
-			String t = ((ExploreCoopAgent)this.myAgent).getWumpusPos() ;
+			((ExploreCoopAgent)this.myAgent).nearAgent = c ;
+			/*String t = ((ExploreCoopAgent)this.myAgent).getWumpusPos() ;
 			if (t != null && c!=null) 
 				if (c.compareTo(t)==0) {
-					System.out.println("ooh he's already there");
 					((ExploreCoopAgent)this.myAgent).setWumpusPos(null); //predict
-				}
+				}*/
 			//System.out.println(this.myAgent.getLocalName()+"Received response from "+msg.getSender().getLocalName());
 			this.myAgent.addBehaviour(new ShareMapBehaviour(this.myAgent, this.myMap, this.receivers));
 			this.myAgent.addBehaviour(new receiveAndUpdateMapBehaviour(this.myAgent,this.myMap));

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,7 +35,7 @@ import javafx.application.Platform;
  * 
  * @author hc
  */
-public class MapRepresentation implements Serializable {
+public class MapRepresentation implements Serializable,Cloneable {
 
 	/**
 	 * A node is open, closed, or agent
@@ -58,9 +59,9 @@ public class MapRepresentation implements Serializable {
 	private String nodeStyle_agent = "node.open {"+"fill-color: blue;"+"}";
 	private String nodeStyle=defaultNodeStyle+nodeStyle_agent+nodeStyle_open;
 
-	private Graph g; //data structure non serializable
+	public Graph g; //data structure non serializable
 	private Viewer viewer; //ref to the display,  non serializable
-	private Integer nbEdges;//used to generate the edges ids
+	public Integer nbEdges;//used to generate the edges ids
 
 	private SerializableSimpleGraph<String, MapAttribute> sg;//used as a temporary dataStructure during migration
 
@@ -79,6 +80,17 @@ public class MapRepresentation implements Serializable {
 		this.nbEdges=0;
 	}
 
+	public MapRepresentation(Graph g, Integer nbEdges) {
+		super();
+		this.g = g;
+		this.nbEdges = nbEdges;
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+
+	    return super.clone();
+	}
 	/**
 	 * Add or replace a node and its attribute 
 	 * @param id
@@ -128,6 +140,25 @@ public class MapRepresentation implements Serializable {
 
 		}
 	}
+	
+	/**
+	 * Add an undirect edge if not already existing.
+	 * @param idNode1
+	 * @param idNode2
+	 */
+	public synchronized void removeEdge(String idNode1,String idNode2){
+		this.nbEdges--;
+		try {
+			this.g.removeEdge(idNode1, idNode2);
+		}catch (IdAlreadyInUseException e1) {
+			System.err.println("ID existing");
+			System.exit(1);
+		}catch (EdgeRejectedException e2) {
+			this.nbEdges++;
+		}catch(ElementNotFoundException e3){
+
+		}
+	}
 
 	/**
 	 * Compute the shortest Path from idFrom to IdTo. The computation is currently not very efficient
@@ -157,43 +188,6 @@ public class MapRepresentation implements Serializable {
 		}
 		return shortestPath;
 	}
-	
-	public synchronized List<String> getLongestPath(String idFrom,String idTo){
-		List<String> shortestPath=new ArrayList<String>();
-
-		Dijkstra dijkstra = new Dijkstra();//number of edge
-		dijkstra.init(g);
-		dijkstra.setSource(g.getNode(idFrom));
-		dijkstra.compute();//compute the distance to all nodes from idFrom
-		Iterable<Path> paths=dijkstra.getAllPaths(g.getNode(idTo));
-		int max = 0;
-		Iterator<Path> iterr=paths.iterator();
-		List<Node> path = null;
-		List<Node> tmp;
-
-		while (iterr.hasNext()){
-			tmp = iterr.next().getNodePath();
-			if (tmp.size()>max) {
-				path = tmp ;
-				max = tmp.size();
-			}
-		}
-		//List<Node> path=dijkstra.getPath(g.getNode(idTo)).getNodePath(); //the shortest path from idFrom to idTo
-		if(path!=null) {
-			Iterator<Node> iter=path.iterator();
-			while (iter.hasNext()){
-				shortestPath.add(iter.next().getId());
-			}
-			dijkstra.clear();
-			if (shortestPath.isEmpty()) {//The openNode is not currently reachable
-				return null;
-			}else {
-				shortestPath.remove(0);//remove the current position
-			}
-		}
-		return shortestPath;
-	}
-
 	public List<String> getShortestPathToClosestOpenNode(String myPosition) {
 		//1) Get all openNodes
 		List<String> opennodes=getOpenNodes();
@@ -206,7 +200,6 @@ public class MapRepresentation implements Serializable {
 
 		Optional<Couple<String,Integer>> closest=lc.stream().min(Comparator.comparing(Couple::getRight));
 		//3) Compute shorterPath
-
 		return getShortestPath(myPosition,closest.get().getLeft());
 	}
 
@@ -219,6 +212,11 @@ public class MapRepresentation implements Serializable {
 	public List<String> getClosedNodes(){
 		return this.g.nodes()
 				.filter(x ->x .getAttribute("ui.class")==MapAttribute.closed.toString()) 
+				.map(Node::getId)
+				.collect(Collectors.toList());
+	}
+	public List<String> getAllNodes(){
+		return this.g.nodes()
 				.map(Node::getId)
 				.collect(Collectors.toList());
 	}

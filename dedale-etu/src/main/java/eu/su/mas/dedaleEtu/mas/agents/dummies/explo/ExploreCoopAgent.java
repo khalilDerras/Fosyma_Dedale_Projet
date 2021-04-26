@@ -43,7 +43,12 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 	private int random = 0 ;
 	private List<Behaviour> lb;
 	private String wumpusPos = null;
-	private boolean onStench = false;
+	public  List<String> lastStenches = null;
+	public String lastPos = null ;
+	public String nearAgent = null;
+	public boolean mov = true;
+	public boolean nearestOrUknown = true;
+	public boolean wumpusFound = false;
 
 	/**
 	 * This method is automatically called when "agent".start() is executed.
@@ -130,18 +135,36 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 	public List<Behaviour> getLB(){
 		return this.lb;
 	}
-	public List<String> getStench() {
+	public String getStench() {
 		
 		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=this.observe();//myPosition
-		List<String> tmp = new ArrayList<String>();
+		int i = 0 ;
+		boolean Stench = false;
+		String first = null ;
 		for(Couple<String,List<Couple<Observation,Integer>>> po:lobs){
 			for(Couple<Observation,Integer> o:po.getRight()) {
-				if(o.getLeft().equals(Observation.STENCH)) {
-					tmp.add(po.getLeft()) ;
+				if(i==0) {
+					Stench = o.getLeft().equals(Observation.STENCH) ;
+					first = po.getLeft();
+				}
+				else
+				if(o.getLeft().equals(Observation.STENCH)) {//aleatoire et //lastpos
+					if (lastPos!= null ) {
+						if (Stench) {
+							if(po.getLeft().compareTo(lastPos)!=0) {
+								//System.out.println(lastPos + "rani f stench w place jdida tssma nro7");
+								return po.getLeft() ;
+						}
+							else if (this.observe().size() == 2) return po.getLeft() ;
+						} 
+						else return po.getLeft() ;
+						}					
+					else return po.getLeft() ;	
 				}
 			}
+			i++;
 		}
-		return tmp;		
+		return null;		
 	}
 	public String getWumpusPos() {
 		return wumpusPos;
@@ -159,8 +182,5 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 			return myPosition.compareTo(wumpusPos)==0;
 		}
 	}
-
-	public void setOnStench(boolean onStench) {
-		this.onStench = onStench;
-	}
+	
 }

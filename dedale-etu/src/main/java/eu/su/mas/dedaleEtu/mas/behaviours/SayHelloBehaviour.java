@@ -46,17 +46,14 @@ public class SayHelloBehaviour extends SimpleBehaviour{
 		msg.setProtocol("HelloProtocol");
 
 		if (myPosition!=""){
-			List<String> wumpusPoss = ((ExploreCoopAgent)this.myAgent).getStench();
-			if(wumpusPoss.size()>0) {
-				System.out.println(((ExploreCoopAgent)this.myAgent).observe().toString());
-				System.out.println(wumpusPoss.toString());
-				System.out.println(this.myAgent.getLocalName() +" found golem");
-				if (wumpusPoss.contains(myPosition)) {
-					((ExploreCoopAgent)this.myAgent).setWumpusPos(myPosition);
-				}
-				else ((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPoss.get(0));
+			String wumpusPoss = ((ExploreCoopAgent)this.myAgent).getStench();
+			//System.out.println(wumpusPoss.toString());
+			//if (wumpusPoss != null ) System.out.println(this.myAgent.getLocalName() +" found golem");
+			/*if(((ExploreCoopAgent)this.myAgent).nearestOrUknown) */((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPoss);
+			if(wumpusPoss == null) {
+				((ExploreCoopAgent)this.myAgent).nearestOrUknown = true ;
+				((ExploreCoopAgent)this.myAgent).wumpusFound = false ;
 			}
-			else if (((ExploreCoopAgent)this.myAgent).isOnStench()) ((ExploreCoopAgent)this.myAgent).setWumpusPos(null);
 			//System.out.println("Agent "+this.myAgent.getLocalName()+ " is trying to reach its friends");
 			msg.setContent(myPosition);
 			for (String agentName : receivers) {
@@ -67,6 +64,7 @@ public class SayHelloBehaviour extends SimpleBehaviour{
 
 			//Mandatory to use this method (it takes into account the environment to decide if someone is reachable or not)
 			((AbstractDedaleAgent)this.myAgent).sendMessage(msg);
+			//((ExploreCoopAgent)this.myAgent).lastStenches = wumpusPoss ;
 		}
 		finished=true;
 

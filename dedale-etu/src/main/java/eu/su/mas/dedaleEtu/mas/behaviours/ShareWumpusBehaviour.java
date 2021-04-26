@@ -55,16 +55,7 @@ public class ShareWumpusBehaviour extends SimpleBehaviour{
 	public void sendMessage() {
 		//Example to retrieve the current position		
 			String wumpusPos = ((ExploreCoopAgent)this.myAgent).getWumpusPos();
-			List<String> tmp =((ExploreCoopAgent)this.myAgent).getStench() ;
-			if (((ExploreCoopAgent)this.myAgent).isOnStench() && tmp.size()>1) 
-			{
-				for (String s:tmp)
-					if (s.compareTo(wumpusPos)!=0)
-						wumpusPos = s;
-				
-			}
-			else if (((ExploreCoopAgent)this.myAgent).isOnStench()) wumpusPos = null;//predict
-					
+			String tmp =((ExploreCoopAgent)this.myAgent).getStench() ;					
 			if ( wumpusPos != null) {
 				//System.out.println(this.myAgent.getLocalName()+"Wumpus Sent");
 				ACLMessage msg=new ACLMessage(ACLMessage.INFORM);
@@ -83,7 +74,7 @@ public class ShareWumpusBehaviour extends SimpleBehaviour{
 	}
 	@Override
 	public void action() {
-		sendMessage();
+		if(((ExploreCoopAgent)this.myAgent).wumpusFound) sendMessage();
 		MessageTemplate msgTemplate=MessageTemplate.and(
 				MessageTemplate.MatchProtocol("Wumpus"),
 				MessageTemplate.MatchPerformative(ACLMessage.INFORM));
@@ -91,7 +82,7 @@ public class ShareWumpusBehaviour extends SimpleBehaviour{
 		if (msgReceived!=null) {
 			String wumpusPos = msgReceived.getContent();
 			if(!((ExploreCoopAgent)this.myAgent).isOnStench()) {
-				((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPos);	
+				if(!((ExploreCoopAgent)this.myAgent).nearestOrUknown) ((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPos);	
 			}
 			//System.out.println(this.myAgent.getLocalName()+"Wumpus Received");
 			//((ExploreCoopAgent)this.myAgent).setHunt(true); //sent msg to set true the other agent
