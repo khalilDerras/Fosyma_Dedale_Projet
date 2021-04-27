@@ -47,11 +47,12 @@ public class SayHelloBehaviour extends SimpleBehaviour{
 
 		if (myPosition!=""){
 			String wumpusPoss = ((ExploreCoopAgent)this.myAgent).getStench();
+			String wumpusPos = ((ExploreCoopAgent)this.myAgent).getWumpusPos();
 			//System.out.println(wumpusPoss.toString());
 			//if (wumpusPoss != null ) System.out.println(this.myAgent.getLocalName() +" found golem");
-			/*if(((ExploreCoopAgent)this.myAgent).nearestOrUknown) */((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPoss);
+			if(wumpusPos!=null && myPosition.compareTo(wumpusPos)==0) ((ExploreCoopAgent)this.myAgent).nearestOrUknown = true ;
+			if(((ExploreCoopAgent)this.myAgent).nearestOrUknown) ((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPoss);
 			if(wumpusPoss == null) {
-				((ExploreCoopAgent)this.myAgent).nearestOrUknown = true ;
 				((ExploreCoopAgent)this.myAgent).wumpusFound = false ;
 			}
 			//System.out.println("Agent "+this.myAgent.getLocalName()+ " is trying to reach its friends");

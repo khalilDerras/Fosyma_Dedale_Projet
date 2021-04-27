@@ -145,7 +145,6 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 					//no directly accessible openNode
 					//chose one, compute the path and take the first step.
 					String tmpPos = ((ExploreCoopAgent)this.myAgent).getWumpusPos();
-					if(tmpPos  == null) {
 						if(nonfinish) {
 						int rand=((ExploreCoopAgent)this.myAgent).getRandom();
 						if(rand>0) {
@@ -164,32 +163,46 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 						else nextNode=this.myMap.getShortestPathToClosestOpenNode(myPosition).get(0);//getShortestPath(myPosition,this.openNodes.get(0)).get(0);
 					}
 						else {
-							while(nodeGoal.equals("") || myPosition.equals(nodeGoal)) {
-								List<String> closednodes=this.myMap.getClosedNodes();
-								Random rand = new Random();
-								nodeGoal = closednodes.get(rand.nextInt(closednodes.size()));
-								System.out.println(this.myAgent.getLocalName()+" ---> Init a new nodeGoal("+nodeGoal+") to search Golem");
-							}
-							nextNode = this.myMap.getShortestPath(myPosition, nodeGoal).get(0);
-							if(nextNode.equals(nodeGoal)) {
-								nodeGoal = "";
-							}
-						}
-					}
-					else {
-						//System.out.println(this.myAgent.getLocalName()+"Hunting "+tmpPos);
-						try {
-						nextNode = this.myMap.getShortestPath(myPosition,tmpPos).get(0);
-						}
-						catch(Exception ex) {
-							mov = false ;
-							/*if(((ExploreCoopAgent)this.myAgent).nearAgent != null && tmpPos.compareTo(((ExploreCoopAgent)this.myAgent).nearAgent)==0) System.out.println(this.myAgent.getLocalName() +" l9ito bss7 mechi howa");
+							if(tmpPos==null) {
+								while(nodeGoal.equals("") || myPosition.equals(nodeGoal)) {
+									List<String> closednodes=this.myMap.getClosedNodes();
+									Random rand = new Random();
+									nodeGoal = closednodes.get(rand.nextInt(closednodes.size()));
+									System.out.println(this.myAgent.getLocalName()+" ---> Init a new nodeGoal("+nodeGoal+") to search Golem");
+								}
+								int rand=((ExploreCoopAgent)this.myAgent).getRandom();
+								if(rand>0) {
+									Random r = new Random();
+									List<String> openNodes = this.myMap.getClosedNodes();
+									if(openNodes.size()>0) {
+									try {
+										nextNode = this.myMap.getShortestPath(myPosition,openNodes.get(r.nextInt(openNodes.size()))).get(0);
+									}
+									catch(Exception ex) {
+										 nextNode=this.myMap.getShortestPath(myPosition, nodeGoal).get(0);
+									}
+									}
+									((ExploreCoopAgent)this.myAgent).setRandom(rand-1);
+								}
+								else nextNode = this.myMap.getShortestPath(myPosition, nodeGoal).get(0);
+								if(nextNode.equals(nodeGoal)) {
+									nodeGoal = "";
+								}
+								}
 							else {
-								System.out.println(this.myAgent.getLocalName() +" l9ito howa");
-								mov = false ;
-							}*/
-						}
-					}
+								try {
+									nextNode = this.myMap.getShortestPath(myPosition,tmpPos).get(0);
+									}
+									catch(Exception ex) {
+										mov = false ;
+										/*if(((ExploreCoopAgent)this.myAgent).nearAgent != null && tmpPos.compareTo(((ExploreCoopAgent)this.myAgent).nearAgent)==0) System.out.println(this.myAgent.getLocalName() +" l9ito bss7 mechi howa");
+										else {
+											System.out.println(this.myAgent.getLocalName() +" l9ito howa");
+											mov = false ;
+										}*/
+									}
+							}
+							}
 					//List<String> openNodes =this.myMap.getOpenNodes();
 					//Random r = new Random();
 					//nextNode=this.myMap.getShortestPath(myPosition,openNodes.get(r.nextInt(openNodes.size()))).get(0);
@@ -242,9 +255,6 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 				String tmp =((ExploreCoopAgent)this.myAgent).lastPos ;
 				String nearAgent = ((ExploreCoopAgent)this.myAgent).nearAgent ;
 				String tmpPos = ((ExploreCoopAgent)this.myAgent).getWumpusPos();
-
-				if (mov) ((ExploreCoopAgent)this.myAgent).mov = ((AbstractDedaleAgent)this.myAgent).moveTo(nextNode);
-				else ((ExploreCoopAgent)this.myAgent).mov = false ;
 				
 				if (!((ExploreCoopAgent)this.myAgent).mov && ((ExploreCoopAgent)this.myAgent).getWumpusPos()!=null) 
 					if (nearAgent!=null && nextNode!=null && nextNode.compareTo(nearAgent)!=0) {
@@ -255,35 +265,38 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 					{
 						((ExploreCoopAgent)this.myAgent).nearestOrUknown = false ; 
 						if(tmpPos.compareTo(nextNode)!=0) {
-						MapRepresentation tmpMap = null;
-						try {
-							tmpMap = (MapRepresentation) this.myMap.clone();
-						} catch (CloneNotSupportedException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						Iterator<Edge> iterE=tmpMap.g.edges().iterator();
-						while (iterE.hasNext()){
-							Edge e=iterE.next();
-							if (e==null) continue;
-							String sn=e.getSourceNode().getId();			
-							String tn=e.getTargetNode().getId();
-							if(sn.compareTo(nearAgent)==0 || tn.compareTo(nearAgent)==0) {
-								tmpMap.removeEdge(sn, tn);
-							}	
-						}
-
-						try {
-							nextNode = tmpMap.getShortestPath(myPosition,tmpPos).get(0);
-							((ExploreCoopAgent)this.myAgent).mov = ((AbstractDedaleAgent)this.myAgent).moveTo(nextNode);
-							System.out.println(this.myAgent.getLocalName()+"l9it triiiiiiiiiiiiiiiiiiiiii9"); 
-						}
-						catch(Exception e) {
-							System.out.println(this.myAgent.getLocalName()+"mal9itech tri9"); 
-						}
 						System.out.println(this.myAgent.getLocalName()+"cha rak dirr" + tmpPos); 
 					}
 					}
+				if (nearAgent!=null && nextNode!=null && tmpPos != null) {
+					MapRepresentation tmpMap = null;
+					try {
+						tmpMap = (MapRepresentation) this.myMap.clone();
+					} catch (CloneNotSupportedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					Iterator<Edge> iterE=tmpMap.g.edges().iterator();
+					while (iterE.hasNext()){
+						Edge e=iterE.next();
+						if (e==null) continue;
+						String sn=e.getSourceNode().getId();			
+						String tn=e.getTargetNode().getId();
+						if(sn.compareTo(nearAgent)==0 || tn.compareTo(nearAgent)==0) {
+							tmpMap.removeEdge(sn, tn);
+						}	
+					}
+	
+					try {
+						nextNode = tmpMap.getShortestPath(myPosition,tmpPos).get(0);
+						System.out.println(this.myAgent.getLocalName()+"l9it triiiiiiiiiiiiiiiiiiiiii9"); 
+					}
+					catch(Exception e) {
+						System.out.println(this.myAgent.getLocalName()+"mal9itech tri9"); 
+					}
+				}
+				if (mov) ((ExploreCoopAgent)this.myAgent).mov = ((AbstractDedaleAgent)this.myAgent).moveTo(nextNode);
+				else ((ExploreCoopAgent)this.myAgent).mov = false ;
 				if (((ExploreCoopAgent)this.myAgent).mov) {
 					((ExploreCoopAgent)this.myAgent).wumpusFound = false ;
 					((ExploreCoopAgent)this.myAgent).lastPos= myPosition ;
