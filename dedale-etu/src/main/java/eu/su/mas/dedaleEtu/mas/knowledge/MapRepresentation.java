@@ -324,110 +324,25 @@ public class MapRepresentation implements Serializable,Cloneable {
 	public SerializableSimpleGraph<String,MapAttribute> difference(SerializableSimpleGraph<String,MapAttribute> graph) {
 		SerializableSimpleGraph<String,MapAttribute> diff= new SerializableSimpleGraph<String,MapAttribute>();
 		Iterator<Node> iter=this.g.iterator();
-		
-
-		
-		/*System.out.println("graph old : ");
-		for (SerializableNode<String, MapAttribute> g: graph.getAllNodes() ) {
-			System.out.print(","+g.getNodeId());
-			//System.out.print("sg noeud ** ** "+this.sg.getNode(n.getNodeId()).getNodeId()  );
-		}
-		System.out.println("");
-		
-		System.out.println("la map g  ::::::: *** :");*/
-		
-
 		while(iter.hasNext()){
 			Node n=iter.next();
-			//System.out.print(","+this.g.getNode(n.getId()));
-			boolean d = false;
-			for (SerializableNode<String, MapAttribute> gr: graph.getAllNodes() ) {
-				if( (gr.getNodeId().compareTo(this.g.getNode(n.getId() ).toString()) == 0  )){
-					d=true;
-				}
-			}
-			if (d==false) {
+			if( !(graph.getAllNodes().contains(this.sg.getNode(n.getId()))));
 				diff.addNode(n.getId(),MapAttribute.valueOf((String)n.getAttribute("ui.class")));
-			}
-				
 		}
-         
 		Iterator<Edge> iterE=this.g.edges().iterator();
-		Integer cpt = 0 ;
 		while (iterE.hasNext()){
 			Edge e=iterE.next();
 			Node sn=e.getSourceNode();			
 			Node tn=e.getTargetNode();
-			boolean a =true ;
-			for (SerializableNode<String, MapAttribute> gr: graph.getAllNodes() ) {
-				if( (gr.getNodeId().compareTo(this.g.getNode(sn.getId() ).toString()) == 0 )){
-					a=false;
-				}
-			}
-
-			boolean b = true;
-			for (SerializableNode<String, MapAttribute> gr: graph.getAllNodes() ) {
-				if( (gr.getNodeId().compareTo(this.g.getNode(tn.getId() ).toString()) == 0  )){
-					b=false;
-				}
-			}
-			
-			if(a) {
+			boolean a = !(graph.getAllNodes().contains(this.sg.getNode(sn.getId())));
+			boolean b = !(graph.getAllNodes().contains(this.sg.getNode(tn.getId())));
+			if(a)
 				diff.addNode(sn.getId(),MapAttribute.valueOf((String)sn.getAttribute("ui.class")));
-			}
-			if(b) {
-				diff.addNode(tn.getId(),MapAttribute.valueOf((String)tn.getAttribute("ui.class")));	
-			}
-		
-			if( a||b ) {
-				cpt++;
-				try {
-					boolean a2 =true ;
-					for (SerializableNode<String, MapAttribute> gr: diff.getAllNodes() ) {
-						if( (gr.getNodeId().compareTo(this.g.getNode(sn.getId() ).toString()) == 0 )){
-							a2=false;
-						}
-					}
-
-					boolean b2 = true;
-					for (SerializableNode<String, MapAttribute> gr: diff.getAllNodes() ) {
-						if( (gr.getNodeId().compareTo(this.g.getNode(tn.getId() ).toString()) == 0  )){
-							b2=false;
-						}
-					}
-					
-					if(a2) {
-						diff.addNode(sn.getId(),MapAttribute.valueOf((String)sn.getAttribute("ui.class")));
-						//System.out.println("a2 -> "+sn.getId());
-					}
-					if(b2) {
-						diff.addNode(tn.getId(),MapAttribute.valueOf((String)tn.getAttribute("ui.class")));
-						//System.out.println("b2 -> "+tn.getId());
-					}
-					diff.addEdge(cpt.toString(),sn.getId(),tn.getId());
-				}
-				catch (NullPointerException e4) {
-					System.out.println("a"+a+",b"+b);
-				}catch (IdAlreadyInUseException e1) {
-					System.err.println("ID existing");
-					System.exit(1);
-				}catch (EdgeRejectedException e2) {
-					this.nbEdges--;
-					System.err.println("EdgeRejectedException");
-				} catch(ElementNotFoundException e3){
-					System.err.println("not found");
-				}
-				
-				
-			
-			}
+			if(b)
+				diff.addNode(tn.getId(),MapAttribute.valueOf((String)tn.getAttribute("ui.class")));
+			if( a||b )
+				diff.addEdge(e.getId(), sn.getId(), tn.getId());
 		}
-		/*System.out.println("");
-		System.out.println("la map difference  ::::::: *** :");
-		for (SerializableNode<String, MapAttribute> g: diff.getAllNodes() ) {
-			System.out.print(","+g.getNodeId());
-		}
-		System.out.println("");*/
 		return diff;	
 	}
 
