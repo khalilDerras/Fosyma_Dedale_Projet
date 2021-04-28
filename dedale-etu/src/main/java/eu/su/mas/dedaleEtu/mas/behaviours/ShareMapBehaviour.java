@@ -1,6 +1,7 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import dataStructures.serializableGraph.SerializableSimpleGraph;
@@ -27,6 +28,7 @@ public class ShareMapBehaviour extends SimpleBehaviour{
 	
 	private MapRepresentation myMap;
 	private List<String> receivers;
+	private HashMap<String,SerializableSimpleGraph<String,MapAttribute>> mapSendedMemory ;
 	private boolean finished;
 
 	/**
@@ -39,10 +41,11 @@ public class ShareMapBehaviour extends SimpleBehaviour{
 	 * @param mymap (the map to share)
 	 * @param receivers the list of agents to send the map to
 	 */
-	public ShareMapBehaviour(Agent a, MapRepresentation mymap, List<String> receivers) {
+	public ShareMapBehaviour(Agent a, MapRepresentation mymap, List<String> receivers , HashMap<String,SerializableSimpleGraph<String,MapAttribute>> mapSendedMemory) {
 		super(a);
 		this.myMap=mymap;
-		this.receivers=receivers;	
+		this.receivers=receivers;
+		this.mapSendedMemory = mapSendedMemory ;
 	}
 
 	/**
@@ -55,21 +58,33 @@ public class ShareMapBehaviour extends SimpleBehaviour{
 		//4) At each time step, the agent blindly send all its graph to its surrounding to illustrate how to share its knowledge (the topology currently) with the the others agents. 	
 		// If it was written properly, this sharing action should be in a dedicated behaviour set, the receivers be automatically computed, and only a subgraph would be shared.
 		
-		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setProtocol("SHARE-TOPO");
-		msg.setSender(this.myAgent.getAID());
 		for (String agentName : receivers) {
+			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+			msg.setProtocol("SHARE-TOPO");
+			msg.setSender(this.myAgent.getAID());
 			msg.addReceiver(new AID(agentName,AID.ISLOCALNAME));
-		}
 			
-		SerializableSimpleGraph<String, MapAttribute> sg=this.myMap.getSerializableGraph();
-		try {					
-			msg.setContentObject(sg);
-		} catch (IOException e) {
-			e.printStackTrace();
+			SerializableSimpleGraph<String,MapAttribute> sgToSend = this.myMap.getSerializableGraph();
+			SerializableSimpleGraph<String,MapAttribute> oldMap =this.mapSendedMemory.get(agentName);
+			if( oldMap != null) {
+				sgToSend = this.myMap.difference(oldMap);
+				
+			}
+			try {	
+				if (!(sgToSend.getAllNodes().isEmpty())) {
+					msg.setContentObject(sgToSend);
+					((AbstractDedaleAgent)this.myAgent).sendMessage(msg);
+				}
+				else {
+					msg.setContentObject(this.myMap.getSerializableGraph());
+					((AbstractDedaleAgent)this.myAgent).sendMessage(msg);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			((AbstractDedaleAgent)this.myAgent).sendMessage(msg);
+			//System.out.println(this.myAgent.getLocalName()+" Map Sended");
 		}
-		((AbstractDedaleAgent)this.myAgent).sendMessage(msg);
-		//System.out.println(this.myAgent.getLocalName()+" Map Sended");
 		finished = true;
 
 		
