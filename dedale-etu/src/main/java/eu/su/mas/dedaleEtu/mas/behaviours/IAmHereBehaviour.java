@@ -55,6 +55,7 @@ public class IAmHereBehaviour extends SimpleBehaviour{
 			((ExploreCoopAgent)this.myAgent).setRandom(2);
 			String c = msg.getContent();
 			((ExploreCoopAgent)this.myAgent).nearAgent = c ;
+			((ExploreCoopAgent)this.myAgent).nearAgents.replace(msg.getSender().getLocalName(), c);
 			/*String t = ((ExploreCoopAgent)this.myAgent).getWumpusPos() ;
 			if (t != null && c!=null) 
 				if (c.compareTo(t)==0) {

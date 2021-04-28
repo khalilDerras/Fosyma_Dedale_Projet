@@ -1,7 +1,9 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.explo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import dataStructures.tuple.Couple;
@@ -44,7 +46,7 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 	private int random = 0 ;
 	private List<Behaviour> lb;
 	private String wumpusPos = null;
-	public  List<String> lastStenches = null;
+	public  Map<String,String> nearAgents = null; // contains the positions of the agents our agent meet
 	public String lastPos = null ;
 	public String nearAgent = null;
 	public boolean mov = true;
@@ -66,6 +68,8 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 		
 		//List<String> list_agentNames=new ArrayList<String>();
 		List<String> list_agentNames = getAgentsList();
+		if(nearAgents==null) nearAgents = new HashMap<String,String>();
+		for (String a:list_agentNames) nearAgents.put(a, null);
 		/*
 		if(args.length==0){
 			System.err.println("Error while creating the agent, names of agent to contact expected");

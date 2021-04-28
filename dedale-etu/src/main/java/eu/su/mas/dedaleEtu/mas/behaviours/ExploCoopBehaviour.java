@@ -58,7 +58,6 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
     
 
 	private boolean finished = false;
-	private String nodeGoal = "";
 
 
 	/**
@@ -68,7 +67,6 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 	private HashMap<String,SerializableSimpleGraph<String,MapAttribute>> mapSendedMemory = new HashMap<String,SerializableSimpleGraph<String,MapAttribute>>();
 
 	private List<String> list_agentNames;
-
 /**
  * 
  * @param myagent
@@ -87,6 +85,7 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 	@Override
 	public void action() {
 		boolean mov = true ;
+		String randomNode = "";
 	    
 		if(this.myMap==null) {
 			this.myMap= new MapRepresentation();
@@ -164,11 +163,10 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 					}
 						else {
 							if(tmpPos==null) {
-								while(nodeGoal.equals("") || myPosition.equals(nodeGoal)) {
+								while(randomNode.equals("") || myPosition.equals(randomNode)) {
 									List<String> closednodes=this.myMap.getClosedNodes();
 									Random rand = new Random();
-									nodeGoal = closednodes.get(rand.nextInt(closednodes.size()));
-									System.out.println(this.myAgent.getLocalName()+" ---> Init a new nodeGoal("+nodeGoal+") to search Golem");
+									randomNode = closednodes.get(rand.nextInt(closednodes.size()));
 								}
 								int rand=((ExploreCoopAgent)this.myAgent).getRandom();
 								if(rand>0) {
@@ -179,14 +177,14 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 										nextNode = this.myMap.getShortestPath(myPosition,openNodes.get(r.nextInt(openNodes.size()))).get(0);
 									}
 									catch(Exception ex) {
-										 nextNode=this.myMap.getShortestPath(myPosition, nodeGoal).get(0);
+										 nextNode=this.myMap.getShortestPath(myPosition, randomNode).get(0);
 									}
 									}
 									((ExploreCoopAgent)this.myAgent).setRandom(rand-1);
 								}
-								else nextNode = this.myMap.getShortestPath(myPosition, nodeGoal).get(0);
-								if(nextNode.equals(nodeGoal)) {
-									nodeGoal = "";
+								else nextNode = this.myMap.getShortestPath(myPosition, randomNode).get(0);
+								if(nextNode.equals(randomNode)) {
+									randomNode = "";
 								}
 								}
 							else {
