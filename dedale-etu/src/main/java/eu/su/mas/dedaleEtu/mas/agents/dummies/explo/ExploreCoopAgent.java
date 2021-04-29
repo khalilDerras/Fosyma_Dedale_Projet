@@ -50,6 +50,7 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 	public boolean mov = true;
 	public boolean nearestOrUknown = true;
 	public boolean wumpusFound = false;
+	public String randGoalNode = "";
 
 	/**
 	 * This method is automatically called when "agent".start() is executed.

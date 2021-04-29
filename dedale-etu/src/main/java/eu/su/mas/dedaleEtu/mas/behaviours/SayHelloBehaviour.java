@@ -49,13 +49,16 @@ public class SayHelloBehaviour extends SimpleBehaviour{
 			String wumpusPoss = ((ExploreCoopAgent)this.myAgent).getStench2();
 			String wumpusPos = ((ExploreCoopAgent)this.myAgent).getWumpusPos();
 			if(((ExploreCoopAgent)this.myAgent).wumpusFound) wumpusPoss = wumpusPos ;
-			//System.out.println(wumpusPoss.toString());
 			//if (wumpusPoss != null ) System.out.println(this.myAgent.getLocalName() +" found golem");
-			if(wumpusPos!=null && myPosition.compareTo(wumpusPos)==0) ((ExploreCoopAgent)this.myAgent).nearestOrUknown = true ;
+			if(wumpusPos!=null && myPosition.compareTo(wumpusPos)==0) {
+				if (wumpusPoss==null) ((ExploreCoopAgent)this.myAgent).setWumpusPos(null) ;
+				((ExploreCoopAgent)this.myAgent).nearestOrUknown = true ;
+			}
 			else if(wumpusPos==null) ((ExploreCoopAgent)this.myAgent).nearestOrUknown = true ;
-			if(((ExploreCoopAgent)this.myAgent).nearestOrUknown) ((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPoss);
+			if(((ExploreCoopAgent)this.myAgent).nearestOrUknown) if(wumpusPoss!=null) ((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPoss);
 			if(wumpusPoss == null) {
 				((ExploreCoopAgent)this.myAgent).wumpusFound = false ;
+				((ExploreCoopAgent)this.myAgent).nearestOrUknown = true ;
 			}
 			//System.out.println("Agent "+this.myAgent.getLocalName()+ " is trying to reach its friends");
 			msg.setContent(myPosition);
