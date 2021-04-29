@@ -46,7 +46,7 @@ public class IAmHereBehaviour extends SimpleBehaviour{
 
 	@Override
 	public void action() {
-		final MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchProtocol("HelloProtocol"), 
+		final MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchProtocol("Ping"), 
 				MessageTemplate.MatchPerformative(ACLMessage.INFORM) );	
 
 		final ACLMessage msg = this.myAgent.receive(msgTemplate);
@@ -55,9 +55,11 @@ public class IAmHereBehaviour extends SimpleBehaviour{
 			String c = msg.getContent();
 			((ExploreCoopAgent)this.myAgent).nearAgent = c ;
 			((ExploreCoopAgent)this.myAgent).nearAgents.replace(msg.getSender().getLocalName(), c);
-			this.myAgent.addBehaviour(new ShareMapBehaviour(this.myAgent, this.myMap, this.receivers,msg.getSender()));
-			this.myAgent.addBehaviour(new receiveAndUpdateMapBehaviour(this.myAgent,this.myMap));
-			this.myAgent.addBehaviour(new ShareWumpusBehaviour(this.myAgent, this.myMap, this.receivers));
+			if(!((ExploreCoopAgent)this.myAgent).finish) {
+				this.myAgent.addBehaviour(new ShareMapBehaviour(this.myAgent, this.myMap, this.receivers,msg.getSender()));
+				this.myAgent.addBehaviour(new receiveAndUpdateMapBehaviour(this.myAgent,this.myMap));
+			}
+			else this.myAgent.addBehaviour(new ShareWumpusBehaviour(this.myAgent, this.myMap, this.receivers));
 
 		}
 		finished=true;

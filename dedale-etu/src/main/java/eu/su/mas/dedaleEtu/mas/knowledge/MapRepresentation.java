@@ -391,7 +391,33 @@ public class MapRepresentation implements Serializable,Cloneable {
 				.filter(n -> n.getAttribute("ui.class")==MapAttribute.open.toString())
 				.findAny()).isPresent();
 	}
+	public String getPathWithoutPassingByNearAgents(String nearAgent,String wumpusPos ,String myPosition) {
+		MapRepresentation tmpMap = null;
+		try {
+			tmpMap = (MapRepresentation) this.clone();
+		} catch (CloneNotSupportedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Iterator<Edge> iterE=tmpMap.g.edges().iterator();
+		while (iterE.hasNext()){
+			Edge e=iterE.next();
+			if (e==null) continue;
+			String sn=e.getSourceNode().getId();			
+			String tn=e.getTargetNode().getId();
+			if(sn.compareTo(nearAgent)==0 || tn.compareTo(nearAgent)==0) {
+				tmpMap.removeEdge(sn, tn);
+			}	
+		}
 
+		try {
+			return tmpMap.getShortestPath(myPosition, wumpusPos).get(0); 
+		}
+		catch(Exception e) {
+			return null ;
+		}
+		
+	}
 
 
 
