@@ -2,7 +2,6 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.explo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
@@ -135,24 +134,6 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 
 	public List<Behaviour> getLB(){
 		return this.lb;
-	}
-	public String getStench2() {
-		
-		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=this.observe();//myPosition
-		lobs.remove(0);
-		List<String> stenches = new ArrayList<String>();
-		for(Couple<String,List<Couple<Observation,Integer>>> po:lobs){
-			for(Couple<Observation,Integer> o:po.getRight()) 
-				if(o.getLeft().equals(Observation.STENCH)) 
-					stenches.add(po.getLeft());
-			}
-		if(stenches.size()>1) {
-			if (stenches.contains(lastPos)) stenches.remove(lastPos);
-			Random r = new Random();
-			return stenches.get(r.nextInt(stenches.size()));
-		}
-		else if (stenches.size()==1) return stenches.get(0); 
-		return null;		
 	}
 	public String getStench() {
 		
