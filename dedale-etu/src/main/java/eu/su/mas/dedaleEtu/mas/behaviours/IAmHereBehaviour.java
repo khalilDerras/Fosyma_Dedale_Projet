@@ -57,7 +57,7 @@ public class IAmHereBehaviour extends SimpleBehaviour{
 			((ExploreCoopAgent)this.myAgent).nearAgents.replace(msg.getSender().getLocalName(), c);
 			if(!((ExploreCoopAgent)this.myAgent).finish) {
 				this.myAgent.addBehaviour(new ShareMapBehaviour(this.myAgent, this.myMap, this.receivers,msg.getSender()));
-				this.myAgent.addBehaviour(new receiveAndUpdateMapBehaviour(this.myAgent,this.myMap));
+				this.myAgent.addBehaviour(new ReceiveAndUpdateMapBehaviour(this.myAgent,this.myMap));
 			}
 			else this.myAgent.addBehaviour(new ShareWumpusBehaviour(this.myAgent, this.myMap, this.receivers));
 

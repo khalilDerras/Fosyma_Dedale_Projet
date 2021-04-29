@@ -31,6 +31,7 @@ public class UpdateWumpusBehaviour extends SimpleBehaviour{
 	 * @param myagent the agent who posses the behaviour
 	 *  
 	 */
+	//mise a jour de la position potentielle de wumps
 	public UpdateWumpusBehaviour (final Agent myagent) {
 		super(myagent); //String []reciver en parametre
 		//super(myagent);
@@ -40,7 +41,7 @@ public class UpdateWumpusBehaviour extends SimpleBehaviour{
 	public void action() {
 		String myPosition=((AbstractDedaleAgent)this.myAgent).getCurrentPosition();
 		if (myPosition!=""){
-			String wumpusPoss = ((ExploreCoopAgent)this.myAgent).getStench2();
+			String wumpusPoss = ((ExploreCoopAgent)this.myAgent).getStench2(); //prédire la position de wumpus
 			String wumpusPos = ((ExploreCoopAgent)this.myAgent).getWumpusPos();
 			if(((ExploreCoopAgent)this.myAgent).wumpusFound) wumpusPoss = wumpusPos ;
 			if(wumpusPos!=null && myPosition.compareTo(wumpusPos)==0) {

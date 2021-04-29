@@ -45,7 +45,7 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 public class ExploreCoopAgent extends AbstractDedaleAgent {
 
 	private static final long serialVersionUID = -7969469610241668140L;
-	private int random = 0 ;
+	private int random = 0 ; // >0 dans le moment de partage pour que les agents ne se suivent pas , indique le numéro des pas avant arreter le random
 	private List<Behaviour> lb;
 	private String wumpusPos = null; //position potenitielle de wumpus
 	public  Map<String,String> nearAgents = null; // contains the positions of the agents our agent meet

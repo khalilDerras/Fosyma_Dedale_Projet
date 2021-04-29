@@ -74,16 +74,14 @@ public class ShareWumpusBehaviour extends SimpleBehaviour{
 	}
 	@Override
 	public void action() {
-		if(((ExploreCoopAgent)this.myAgent).wumpusFound) sendMessage();
+		if(((ExploreCoopAgent)this.myAgent).wumpusFound) sendMessage(); //envoyer sauf si l'agent connait la position réelle de wumpus
 		MessageTemplate msgTemplate=MessageTemplate.and(
 				MessageTemplate.MatchProtocol("Wumpus"),
 				MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 		ACLMessage msgReceived=this.myAgent.receive(msgTemplate);
 		if (msgReceived!=null) {
 			String wumpusPos = msgReceived.getContent();
-			if(!((ExploreCoopAgent)this.myAgent).smell) ((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPos);	
-			//System.out.println(this.myAgent.getLocalName()+"Wumpus Received");
-			//((ExploreCoopAgent)this.myAgent).setHunt(true); //sent msg to set true the other agent
+			if(!((ExploreCoopAgent)this.myAgent).smell) ((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPos); //le conditon est pour pouvoir aller à l'autre coté de wumpus indiqué par le sender sans changer d'objectif
 		}
 		finished = true;	
 	}

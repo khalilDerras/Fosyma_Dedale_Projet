@@ -14,12 +14,12 @@ import eu.su.mas.dedaleEtu.mas.agents.dummies.explo.ExploreCoopAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 
-public class receiveAndUpdateMapBehaviour extends SimpleBehaviour {
+public class ReceiveAndUpdateMapBehaviour extends SimpleBehaviour {
 	private boolean finished = false;
 	private MapRepresentation myMap;
 
 
-	public receiveAndUpdateMapBehaviour(Agent myAgent,MapRepresentation mymap) {
+	public ReceiveAndUpdateMapBehaviour(Agent myAgent,MapRepresentation mymap) {
 		super(myAgent);
 		this.myMap=mymap;
 	}

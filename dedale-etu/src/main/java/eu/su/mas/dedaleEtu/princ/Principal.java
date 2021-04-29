@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import eu.su.mas.dedaleEtu.mas.agents.dummies.DummyMovingAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.DummyTankerAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.ExploreSoloAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.explo.ExploreCoopAgent;
@@ -284,8 +285,7 @@ public class Principal {
 		 *****************************************************/
 		
 		//1) Get the container where the agent will appear
-		/*
-		c = containerList.get(ConfigurationFile.LOCAL_CONTAINER2_NAME);
+		/*c = containerList.get(ConfigurationFile.LOCAL_CONTAINER2_NAME);
 		Assert.assertNotNull("This container does not exist",c);
 
 		//2) Give the name of your agent, MUST be the same as the one given in the entities file.
@@ -296,23 +296,22 @@ public class Principal {
 
 		//4) Give the class name of your agent to let the system instantiate it
 		ag=createNewDedaleAgent(c, agentName, ControlledAgent.class.getName(), entityParameters);
-		agentList.add(ag);	
-		*/
-		
+		//ag=createNewDedaleAgent(c, agentName, DummyWumpusShift.class.getName(), entityParameters);
+		agentList.add(ag);	*/
 		/*********
 		 * GOLEM
 		 *********/
 		//1) Get the container where the agent will appear
 		c = containerList.get(ConfigurationFile.LOCAL_CONTAINER2_NAME);
 		Assert.assertNotNull("This container does not exist",c);
-		
-		//2) Give the name of your agent, MUST be the same as the one given in the entities file.
+//		
+//		//2) Give the name of your agent, MUST be the same as the one given in the entities file.
 		agentName="Golem";
-		
-		//3) If you want to give specific parameters to your agent, add them here
+//		
+//		//3) If you want to give specific parameters to your agent, add them here
 		Object [] entityParameters={"My parameters"};
-		
-		//4) Give the class name of your agent to let the system instantiate it
+//		
+//		//4) Give the class name of your agent to let the system instantiate it
 		ag=createNewDedaleAgent(c, agentName, DummyWumpusShift.class.getName(), entityParameters);
 		agentList.add(ag);	
 		
@@ -385,8 +384,8 @@ public class Principal {
 		Object [] entityParametersExplo4={"2ndAgent"};
 		
 		//4) Give the class name of your agent to let the system instantiate it
-		//ag=createNewDedaleAgent(c, agentName, ExploreCoopAgent.class.getName(), entityParametersExplo4);//ExploreSoloAgent
 		ag=createNewDedaleAgent(c, agentName, ExploreCoopAgent.class.getName(), entityParametersExplo4);//ExploreSoloAgent
+		
 		agentList.add(ag);
 		
 		/*********
