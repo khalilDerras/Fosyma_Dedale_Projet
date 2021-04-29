@@ -190,7 +190,7 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 									}
 									catch(Exception ex) {
 									}
-								if(nextNode.equals(nodeGoal)) {
+								if(nextNode!=null && nextNode.equals(nodeGoal)) {
 									nodeGoal = "";
 								}
 								((ExploreCoopAgent)this.myAgent).randGoalNode =  nodeGoal ;

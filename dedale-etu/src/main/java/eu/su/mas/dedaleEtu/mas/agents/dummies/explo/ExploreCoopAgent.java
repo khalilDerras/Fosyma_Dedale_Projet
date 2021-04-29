@@ -1,9 +1,12 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.explo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import dataStructures.serializableGraph.SerializableSimpleGraph;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
@@ -13,6 +16,7 @@ import eu.su.mas.dedaleEtu.mas.behaviours.ExploCoopBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.IAmHereBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SayHelloBehaviour;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
+import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.domain.AMSService;
@@ -44,13 +48,15 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 	private int random = 0 ;
 	private List<Behaviour> lb;
 	private String wumpusPos = null;
-	public  List<String> lastStenches = null;
+	public  Map<String,String> nearAgents = null; // contains the positions of the agents our agent meet
 	public String lastPos = null ;
 	public String nearAgent = null;
 	public boolean mov = true;
 	public boolean nearestOrUknown = true;
 	public boolean wumpusFound = false;
 	public String randGoalNode = "";
+	public HashMap<String,SerializableSimpleGraph<String,MapAttribute>> mapSendedMemory = new HashMap<String,SerializableSimpleGraph<String,MapAttribute>>();
+
 
 	/**
 	 * This method is automatically called when "agent".start() is executed.
@@ -67,6 +73,8 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 		
 		//List<String> list_agentNames=new ArrayList<String>();
 		List<String> list_agentNames = getAgentsList();
+		if(nearAgents==null) nearAgents = new HashMap<String,String>();
+		for (String a:list_agentNames) nearAgents.put(a, null);
 		/*
 		if(args.length==0){
 			System.err.println("Error while creating the agent, names of agent to contact expected");

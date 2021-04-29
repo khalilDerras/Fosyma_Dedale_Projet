@@ -1,10 +1,13 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
+import java.util.HashMap;
 import java.util.List;
 
+import dataStructures.serializableGraph.SerializableSimpleGraph;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.explo.ExploreCoopAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
+import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -51,13 +54,8 @@ public class IAmHereBehaviour extends SimpleBehaviour{
 			((ExploreCoopAgent)this.myAgent).setRandom(2);
 			String c = msg.getContent();
 			((ExploreCoopAgent)this.myAgent).nearAgent = c ;
-			/*String t = ((ExploreCoopAgent)this.myAgent).getWumpusPos() ;
-			if (t != null && c!=null) 
-				if (c.compareTo(t)==0) {
-					((ExploreCoopAgent)this.myAgent).setWumpusPos(null); //predict
-				}*/
-			//System.out.println(this.myAgent.getLocalName()+"Received response from "+msg.getSender().getLocalName());
-			this.myAgent.addBehaviour(new ShareMapBehaviour(this.myAgent, this.myMap, this.receivers));
+			((ExploreCoopAgent)this.myAgent).nearAgents.replace(msg.getSender().getLocalName(), c);
+			this.myAgent.addBehaviour(new ShareMapBehaviour(this.myAgent, this.myMap, this.receivers,msg.getSender()));
 			this.myAgent.addBehaviour(new receiveAndUpdateMapBehaviour(this.myAgent,this.myMap));
 			this.myAgent.addBehaviour(new ShareWumpusBehaviour(this.myAgent, this.myMap, this.receivers));
 

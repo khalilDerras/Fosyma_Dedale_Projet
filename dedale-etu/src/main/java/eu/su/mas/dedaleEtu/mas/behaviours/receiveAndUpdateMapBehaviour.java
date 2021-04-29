@@ -1,5 +1,7 @@
 package eu.su.mas.dedaleEtu.mas.behaviours;
 
+import java.util.HashMap;
+
 import dataStructures.serializableGraph.SerializableSimpleGraph;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -16,6 +18,7 @@ public class receiveAndUpdateMapBehaviour extends SimpleBehaviour {
 	private boolean finished = false;
 	private MapRepresentation myMap;
 
+
 	public receiveAndUpdateMapBehaviour(Agent myAgent,MapRepresentation mymap) {
 		super(myAgent);
 		this.myMap=mymap;
@@ -31,14 +34,17 @@ public class receiveAndUpdateMapBehaviour extends SimpleBehaviour {
 			SerializableSimpleGraph<String, MapAttribute> sgreceived=null;
 			try {
 				sgreceived = (SerializableSimpleGraph<String, MapAttribute>)msgReceived.getContentObject();
+				
 			} catch (UnreadableException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//System.out.println(this.myMap.getClosedNodes().size());
-			this.myMap.mergeMap(sgreceived);
+			
+			if(sgreceived!=null) {
+				this.myMap.mergeMap(sgreceived);
+			}
 			//System.out.println(this.myAgent.getLocalName()+" Map Recieved And Updated");
-			//System.out.println(this.myMap.getClosedNodes().size());
+			
 
 		}
 		finished = true ;
