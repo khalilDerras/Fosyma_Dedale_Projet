@@ -14,17 +14,14 @@ import eu.su.mas.dedaleEtu.mas.agents.dummies.explo.ExploreCoopAgent;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 
-public class receiveAndUpdateMapBehaviour extends SimpleBehaviour {
+public class ReceiveAndUpdateMapBehaviour extends SimpleBehaviour {
 	private boolean finished = false;
 	private MapRepresentation myMap;
-	private HashMap<String,SerializableSimpleGraph<String,MapAttribute>> mapSendedMemory ;
 
 
-	public receiveAndUpdateMapBehaviour(Agent myAgent,MapRepresentation mymap, HashMap<String,SerializableSimpleGraph<String,MapAttribute>> mapSendedMemory) {
+	public ReceiveAndUpdateMapBehaviour(Agent myAgent,MapRepresentation mymap) {
 		super(myAgent);
 		this.myMap=mymap;
-		this.mapSendedMemory = mapSendedMemory ;
-
 	}
 
 	@Override
@@ -42,11 +39,12 @@ public class receiveAndUpdateMapBehaviour extends SimpleBehaviour {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println(this.myMap.getClosedNodes().size()+"psp");
-			this.myMap.mergeMap(sgreceived);
-			this.mapSendedMemory.put(msgReceived.getSender().getLocalName() , this.myMap.getSerializableGraph());			
+			
+			if(sgreceived!=null) {
+				this.myMap.mergeMap(sgreceived);
+			}
 			//System.out.println(this.myAgent.getLocalName()+" Map Recieved And Updated");
-			System.out.println(this.myMap.getClosedNodes().size()+ "dsd");
+			
 
 		}
 		finished = true ;

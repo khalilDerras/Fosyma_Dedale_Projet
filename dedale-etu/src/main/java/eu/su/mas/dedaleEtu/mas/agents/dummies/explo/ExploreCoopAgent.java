@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import dataStructures.serializableGraph.SerializableSimpleGraph;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
@@ -13,8 +14,9 @@ import eu.su.mas.dedale.mas.agent.behaviours.startMyBehaviours;
 
 import eu.su.mas.dedaleEtu.mas.behaviours.ExploCoopBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.IAmHereBehaviour;
-import eu.su.mas.dedaleEtu.mas.behaviours.SayHelloBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.PingBehaviour;
 import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
+import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation.MapAttribute;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.domain.AMSService;
@@ -43,15 +45,19 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 public class ExploreCoopAgent extends AbstractDedaleAgent {
 
 	private static final long serialVersionUID = -7969469610241668140L;
-	private int random = 0 ;
+	private int random = 0 ; // >0 dans le moment de partage pour que les agents ne se suivent pas , indique le numéro des pas avant arreter le random
 	private List<Behaviour> lb;
-	private String wumpusPos = null;
+	private String wumpusPos = null; //position potenitielle de wumpus
 	public  Map<String,String> nearAgents = null; // contains the positions of the agents our agent meet
-	public String lastPos = null ;
+	public String lastPos = null ; //la derniere position de l'agent
 	public String nearAgent = null;
 	public boolean mov = true;
-	public boolean nearestOrUknown = true;
-	public boolean wumpusFound = false;
+	public boolean smell = true; //possibilité de l'agent de sentir l'odeur de wumpus
+	public boolean wumpusFound = false; //si la vrai position de wumpus est trouvé
+	public boolean finish = false ; // indique la fin de l'exploration
+	public String randGoalNode = ""; //un noeud aléatoire comme but aprés la fin de l'exploration
+	public HashMap<String,SerializableSimpleGraph<String,MapAttribute>> mapSendedMemory = new HashMap<String,SerializableSimpleGraph<String,MapAttribute>>();
+
 
 	/**
 	 * This method is automatically called when "agent".start() is executed.
@@ -195,15 +201,6 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 
 	public void setWumpusPos(String wumpusPos) {
 		this.wumpusPos = wumpusPos;
-	}
-
-	public boolean isOnStench() {
-		String wumpusPos = this.getWumpusPos();
-		String myPosition=((AbstractDedaleAgent)this).getCurrentPosition();
-		if (wumpusPos == null) return false;
-		else {
-			return myPosition.compareTo(wumpusPos)==0;
-		}
 	}
 	
 }

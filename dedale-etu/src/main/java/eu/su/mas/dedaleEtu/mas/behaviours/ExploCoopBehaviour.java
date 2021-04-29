@@ -59,13 +59,10 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 
 	private boolean finished = false;
 
-
 	/**
 	 * Current knowledge of the agent regarding the environment
 	 */
 	private MapRepresentation myMap;
-	private HashMap<String,SerializableSimpleGraph<String,MapAttribute>> mapSendedMemory = new HashMap<String,SerializableSimpleGraph<String,MapAttribute>>();
-
 	private List<String> list_agentNames;
 /**
  * 
@@ -123,19 +120,9 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 			}
 
 			//3) while openNodes is not empty, continues.
-			boolean nonfinish = true ;
 			if (!this.myMap.hasOpenNode()){
-				nonfinish = false ;
-				//Explo finished
-				/*List<Behaviour> lb = ((ExploreCoopAgent)this.myAgent).getLB();
-			    for (Behaviour b : lb) {
-			    	if (! b.getBehaviourName().equals("ExploCoopBehaviour")) {
-			    		System.out.println(b.getBehaviourName());
-			    		this.myAgent.removeBehaviour(b);
-			    	}
-			      }*/
-				//finished=true;
-				System.out.println(this.myAgent.getLocalName()+" - Exploration successufully done, behaviour removed.");
+				if (!((ExploreCoopAgent)this.myAgent).finish) System.out.println(this.myAgent.getLocalName()+" - Exploration successufully done, behaviour removed.");
+				((ExploreCoopAgent)this.myAgent).finish = true ;
 			}
 				//4) select next move.
 				//4.1 If there exist one open node directly reachable, go for it,
@@ -144,7 +131,7 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 					//no directly accessible openNode
 					//chose one, compute the path and take the first step.
 					String tmpPos = ((ExploreCoopAgent)this.myAgent).getWumpusPos();
-						if(nonfinish) {
+						if(!((ExploreCoopAgent)this.myAgent).finish) {
 						int rand=((ExploreCoopAgent)this.myAgent).getRandom();
 						if(rand>0) {
 							Random r = new Random();
@@ -163,137 +150,73 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 					}
 						else {
 							if(tmpPos==null) {
-								while(randomNode.equals("") || myPosition.equals(randomNode)) {
-									List<String> closednodes=this.myMap.getClosedNodes();
-									Random rand = new Random();
-									randomNode = closednodes.get(rand.nextInt(closednodes.size()));
+								String nodeGoal = ((ExploreCoopAgent)this.myAgent).randGoalNode;
+								List<String> closednodes=this.myMap.getClosedNodes();
+								Random r = new Random();
+
+								while(nodeGoal.equals("") || myPosition.equals(nodeGoal)) {
+									nodeGoal = closednodes.get(r.nextInt(closednodes.size()));
 								}
 								int rand=((ExploreCoopAgent)this.myAgent).getRandom();
 								if(rand>0) {
-									Random r = new Random();
-									List<String> openNodes = this.myMap.getClosedNodes();
-									if(openNodes.size()>0) {
+									if(closednodes.size()>0) {
 									try {
-										nextNode = this.myMap.getShortestPath(myPosition,openNodes.get(r.nextInt(openNodes.size()))).get(0);
+										nextNode = this.myMap.getShortestPath(myPosition,closednodes.get(r.nextInt(closednodes.size()))).get(0);
 									}
 									catch(Exception ex) {
-										 nextNode=this.myMap.getShortestPath(myPosition, randomNode).get(0);
 									}
 									}
 									((ExploreCoopAgent)this.myAgent).setRandom(rand-1);
 								}
-								else nextNode = this.myMap.getShortestPath(myPosition, randomNode).get(0);
-								if(nextNode.equals(randomNode)) {
-									randomNode = "";
+								else
+									try{
+										nextNode = this.myMap.getShortestPath(myPosition, nodeGoal).get(0);
+									}
+									catch(Exception ex) {
+										String n = closednodes.get(r.nextInt(closednodes.size())) ;
+										List<String> tmpp = this.myMap.getShortestPath(myPosition,n) ;
+										if(tmpp!=null && tmpp.size()>0) nextNode = tmpp.get(0);
+										nodeGoal = "";
+									}
+								if(nextNode!=null && nextNode.equals(nodeGoal)) {
+									nodeGoal = "";
 								}
+								((ExploreCoopAgent)this.myAgent).randGoalNode =  nodeGoal ;
 								}
 							else {
 								try {
 									nextNode = this.myMap.getShortestPath(myPosition,tmpPos).get(0);
 									}
 									catch(Exception ex) {
-										mov = false ;
-										/*if(((ExploreCoopAgent)this.myAgent).nearAgent != null && tmpPos.compareTo(((ExploreCoopAgent)this.myAgent).nearAgent)==0) System.out.println(this.myAgent.getLocalName() +" l9ito bss7 mechi howa");
-										else {
-											System.out.println(this.myAgent.getLocalName() +" l9ito howa");
-											mov = false ;
-										}*/
+										((ExploreCoopAgent)this.myAgent).setWumpusPos(null) ;
 									}
 							}
 							}
-					//List<String> openNodes =this.myMap.getOpenNodes();
-					//Random r = new Random();
-					//nextNode=this.myMap.getShortestPath(myPosition,openNodes.get(r.nextInt(openNodes.size()))).get(0);
 					
 				}else {
 					//System.out.println("nextNode notNUll - "+this.myAgent.getLocalName()+"-- list= "+this.myMap.getOpenNodes()+"\n -- nextNode: "+nextNode);
 				}
-				//4) At each time step, the agent blindly send all its graph to its surrounding to illustrate how to share its knowledge (the topology currently) with the the others agents. 	
-				// If it was written properly, this sharing action should be in a dedicated behaviour set, the receivers be automatically computed, and only a subgraph would be shared.
-
-//				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-//				msg.setProtocol("SHARE-TOPO");
-//				msg.setSender(this.myAgent.getAID());
-//				if (this.myAgent.getLocalName().equals("1stAgent")) {
-//					msg.addReceiver(new AID("2ndAgent",false));
-//				}else {
-//					msg.addReceiver(new AID("1stAgent",false));
-//				}
-//				SerializableSimpleGraph<String, MapAttribute> sg=this.myMap.getSerializableGraph();
-//				try {					
-//					msg.setContentObject(sg);
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//				((AbstractDedaleAgent)this.myAgent).sendMessage(msg);
-
-				//5) At each time step, the agent check if he received a graph from a teammate. 	
-				// If it was written properly, this sharing action should be in a dedicated behaviour set.
-				/*MessageTemplate msgTemplate=MessageTemplate.and(
-						MessageTemplate.MatchProtocol("SHARE-TOPO"),
-						MessageTemplate.MatchPerformative(ACLMessage.INFORM));
-				ACLMessage msgReceived=this.myAgent.receive(msgTemplate);
-				if (msgReceived!=null) {
-					SerializableSimpleGraph<String, MapAttribute> sgreceived=null;
-					try {
-						sgreceived = (SerializableSimpleGraph<String, MapAttribute>)msgReceived.getContentObject();
-					} catch (UnreadableException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					//this.list_agentNames.indexOf(this.myAgent.getName());
-					//System.out.println("indice"+this.list_agentNames.indexOf(msgReceived.getSender().getName()));
-
-					//list<String> openNodes =this.sgreceived.getOpenNodes();
-					this.myMap.mergeMap(sgreceived);
-					//this.mapSendedMemory.put(msgReceived.getSender().getLocalName(),sgreceived);
-				}*/
-				this.myAgent.addBehaviour(new SayHelloBehaviour(this.myAgent,list_agentNames));
+				this.myAgent.addBehaviour(new PingBehaviour(this.myAgent,list_agentNames));
+				this.myAgent.addBehaviour(new UpdateWumpusBehaviour(this.myAgent));
 				this.myAgent.addBehaviour(new IAmHereBehaviour(this.myAgent,list_agentNames,this.myMap));
-				String tmp =((ExploreCoopAgent)this.myAgent).lastPos ;
+				
 				String nearAgent = ((ExploreCoopAgent)this.myAgent).nearAgent ;
 				String tmpPos = ((ExploreCoopAgent)this.myAgent).getWumpusPos();
 				
-				if (!((ExploreCoopAgent)this.myAgent).mov && ((ExploreCoopAgent)this.myAgent).getWumpusPos()!=null) 
-					if (nearAgent!=null && nextNode!=null && nextNode.compareTo(nearAgent)!=0) {
-						((ExploreCoopAgent)this.myAgent).wumpusFound = true ; 
-						System.out.println(this.myAgent.getLocalName()+"rani hnaa"+tmpPos); 
-					}
-					else if (nearAgent!=null && nextNode!=null && nextNode.compareTo(nearAgent)==0)
+				if (!((ExploreCoopAgent)this.myAgent).mov && tmpPos!=null) 
+					if (nearAgent!=null && nextNode!=null && nextNode.compareTo(nearAgent)==0)
 					{
-						((ExploreCoopAgent)this.myAgent).nearestOrUknown = false ; 
-						if(tmpPos.compareTo(nextNode)!=0) {
-						System.out.println(this.myAgent.getLocalName()+"cha rak dirr" + tmpPos); 
+						((ExploreCoopAgent)this.myAgent).smell = false ; //the next position of the agent is the other agent so he will recieve the true position of the wumpus of him , so stop smelling to go for it
+						((ExploreCoopAgent)this.myAgent).wumpusFound = false ; //wumpus non trouvé car c'est juste un autre agent
+						((ExploreCoopAgent)this.myAgent).setWumpusPos(null) ;
 					}
+					else if(nextNode!=null && nextNode.compareTo(tmpPos)==0){
+						((ExploreCoopAgent)this.myAgent).wumpusFound = true ; //wumpus trouvé
 					}
-				if (nearAgent!=null && nextNode!=null && tmpPos != null) {
-					MapRepresentation tmpMap = null;
-					try {
-						tmpMap = (MapRepresentation) this.myMap.clone();
-					} catch (CloneNotSupportedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					Iterator<Edge> iterE=tmpMap.g.edges().iterator();
-					while (iterE.hasNext()){
-						Edge e=iterE.next();
-						if (e==null) continue;
-						String sn=e.getSourceNode().getId();			
-						String tn=e.getTargetNode().getId();
-						if(sn.compareTo(nearAgent)==0 || tn.compareTo(nearAgent)==0) {
-							tmpMap.removeEdge(sn, tn);
-						}	
-					}
-	
-					try {
-						nextNode = tmpMap.getShortestPath(myPosition,tmpPos).get(0);
-						System.out.println(this.myAgent.getLocalName()+"l9it triiiiiiiiiiiiiiiiiiiiii9"); 
-					}
-					catch(Exception e) {
-						System.out.println(this.myAgent.getLocalName()+"mal9itech tri9"); 
-					}
+				if (nearAgent!=null && nextNode!=null && tmpPos != null && ((ExploreCoopAgent)this.myAgent).finish) {
+					nextNode = this.myMap.getPathWithoutPassingByNearAgents(nearAgent,tmpPos ,myPosition); //aller au wumpus sans passer par l'autre agent
 				}
-				if (mov) ((ExploreCoopAgent)this.myAgent).mov = ((AbstractDedaleAgent)this.myAgent).moveTo(nextNode);
+				if (nextNode!=null) ((ExploreCoopAgent)this.myAgent).mov = ((AbstractDedaleAgent)this.myAgent).moveTo(nextNode);
 				else ((ExploreCoopAgent)this.myAgent).mov = false ;
 				if (((ExploreCoopAgent)this.myAgent).mov) {
 					((ExploreCoopAgent)this.myAgent).wumpusFound = false ;
