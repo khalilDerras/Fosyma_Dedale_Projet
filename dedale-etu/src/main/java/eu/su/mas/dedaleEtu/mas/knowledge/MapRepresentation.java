@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -391,7 +392,7 @@ public class MapRepresentation implements Serializable,Cloneable {
 				.filter(n -> n.getAttribute("ui.class")==MapAttribute.open.toString())
 				.findAny()).isPresent();
 	}
-	public String getPathWithoutPassingByNearAgents(String nearAgent,String wumpusPos ,String myPosition) {
+	public String getPathWithoutPassingByNearAgents(Map<String, String> agents,String wumpusPos ,String myPosition) {
 		MapRepresentation tmpMap = null;
 		try {
 			tmpMap = (MapRepresentation) this.clone();
@@ -399,24 +400,22 @@ public class MapRepresentation implements Serializable,Cloneable {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		Iterator<Edge> iterE=tmpMap.g.edges().iterator();
-		while (iterE.hasNext()){
-			Edge e=iterE.next();
-			if (e==null) continue;
-			String sn=e.getSourceNode().getId();			
-			String tn=e.getTargetNode().getId();
-			if(sn.compareTo(nearAgent)==0 || tn.compareTo(nearAgent)==0) {
-				tmpMap.removeEdge(sn, tn);
-			}	
-		}
-
-		try {
-			return tmpMap.getShortestPath(myPosition, wumpusPos).get(0); 
-		}
-		catch(Exception e) {
-			return null ;
-		}
-		
+		for(String agent : agents.values()) if(agent!=null){
+			Iterator<Edge> iterE=tmpMap.g.edges().iterator();
+			while (iterE.hasNext()){
+				Edge e=iterE.next();
+				if (e==null) continue;
+				String sn=e.getSourceNode().getId();			
+				String tn=e.getTargetNode().getId();
+				if(sn.compareTo(agent)==0 || tn.compareTo(agent)==0) {
+					tmpMap.removeEdge(sn, tn);
+				}	
+			}
+		}		
+		List<String> tmpp = tmpMap.getShortestPath(myPosition,wumpusPos) ;
+		if(tmpp!=null && tmpp.size()>0)  return tmpp.get(0);
+		if (tmpp!=null && tmpp.size()==0) System.out.print("dejaa temaa");
+		return null;
 	}
 
 

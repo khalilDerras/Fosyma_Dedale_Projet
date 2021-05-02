@@ -164,6 +164,21 @@ public class ExploreCoopAgent extends AbstractDedaleAgent {
 		else if (stenches.size()==1) return stenches.get(0); 
 		return null;		
 	}
+	
+	public String getRandomDirect() {
+		
+		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=this.observe();//myPosition
+		lobs.remove(0);
+		List<String> stenches = new ArrayList<String>();
+		for(Couple<String,List<Couple<Observation,Integer>>> po:lobs)
+				stenches.add(po.getLeft());
+		if(stenches.size()>0) {
+			Random r = new Random();
+			return stenches.get(r.nextInt(stenches.size()));
+		}
+		return null;
+	}
+	
 	public String getStench() {
 		
 		List<Couple<String,List<Couple<Observation,Integer>>>> lobs=this.observe();//myPosition

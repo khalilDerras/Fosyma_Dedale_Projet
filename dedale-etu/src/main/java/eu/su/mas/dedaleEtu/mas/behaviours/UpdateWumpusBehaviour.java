@@ -43,17 +43,16 @@ public class UpdateWumpusBehaviour extends SimpleBehaviour{
 		if (myPosition!=""){
 			String wumpusPoss = ((ExploreCoopAgent)this.myAgent).getStench2(); //prédire la position de wumpus
 			String wumpusPos = ((ExploreCoopAgent)this.myAgent).getWumpusPos();
-			if(((ExploreCoopAgent)this.myAgent).wumpusFound) wumpusPoss = wumpusPos ;
-			if(wumpusPos!=null && myPosition.compareTo(wumpusPos)==0) {
+			if(wumpusPos!=null && myPosition.compareTo(wumpusPos)==0) { //si il atteint sa destination
 				if (wumpusPoss==null) ((ExploreCoopAgent)this.myAgent).setWumpusPos(null) ;
 				((ExploreCoopAgent)this.myAgent).smell = true ;
 			}
 			else if(wumpusPos==null) ((ExploreCoopAgent)this.myAgent).smell = true ;
-			if(((ExploreCoopAgent)this.myAgent).smell) if(wumpusPoss!=null) ((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPoss);
 			if(wumpusPoss == null) {
 				((ExploreCoopAgent)this.myAgent).wumpusFound = false ;
 				((ExploreCoopAgent)this.myAgent).smell = true ;
-			}		
+			}
+			if(((ExploreCoopAgent)this.myAgent).smell && !((ExploreCoopAgent)this.myAgent).wumpusFound) if(wumpusPoss!=null) ((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPoss);		
 		}
 		finished=true;
 

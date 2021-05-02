@@ -81,7 +81,7 @@ public class ShareWumpusBehaviour extends SimpleBehaviour{
 		ACLMessage msgReceived=this.myAgent.receive(msgTemplate);
 		if (msgReceived!=null) {
 			String wumpusPos = msgReceived.getContent();
-			if(!((ExploreCoopAgent)this.myAgent).smell) ((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPos); //le conditon est pour pouvoir aller à l'autre coté de wumpus indiqué par le sender sans changer d'objectif
+			if(!((ExploreCoopAgent)this.myAgent).smell && !((ExploreCoopAgent)this.myAgent).wumpusFound) ((ExploreCoopAgent)this.myAgent).setWumpusPos(wumpusPos); //le conditon est pour pouvoir aller à l'autre coté de wumpus indiqué par le sender sans changer d'objectif
 		}
 		finished = true;	
 	}

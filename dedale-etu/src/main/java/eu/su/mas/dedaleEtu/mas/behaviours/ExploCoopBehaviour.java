@@ -134,16 +134,7 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 						if(!((ExploreCoopAgent)this.myAgent).finish) {
 						int rand=((ExploreCoopAgent)this.myAgent).getRandom();
 						if(rand>0) {
-							Random r = new Random();
-							List<String> openNodes = this.myMap.getOpenNodes();
-							if(openNodes.size()>0) {
-							try {
-								nextNode = this.myMap.getShortestPath(myPosition,openNodes.get(r.nextInt(openNodes.size()))).get(0);
-							}
-							catch(Exception ex) {
-								 nextNode=this.myMap.getShortestPathToClosestOpenNode(myPosition).get(0);
-							}
-							}
+							nextNode = ((ExploreCoopAgent)this.myAgent).getRandomDirect();
 							((ExploreCoopAgent)this.myAgent).setRandom(rand-1);
 						}
 						else nextNode=this.myMap.getShortestPathToClosestOpenNode(myPosition).get(0);//getShortestPath(myPosition,this.openNodes.get(0)).get(0);
@@ -159,13 +150,7 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 								}
 								int rand=((ExploreCoopAgent)this.myAgent).getRandom();
 								if(rand>0) {
-									if(closednodes.size()>0) {
-									try {
-										nextNode = this.myMap.getShortestPath(myPosition,closednodes.get(r.nextInt(closednodes.size()))).get(0);
-									}
-									catch(Exception ex) {
-									}
-									}
+									nextNode = ((ExploreCoopAgent)this.myAgent).getRandomDirect();
 									((ExploreCoopAgent)this.myAgent).setRandom(rand-1);
 								}
 								else
@@ -197,24 +182,33 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 					//System.out.println("nextNode notNUll - "+this.myAgent.getLocalName()+"-- list= "+this.myMap.getOpenNodes()+"\n -- nextNode: "+nextNode);
 				}
 				this.myAgent.addBehaviour(new PingBehaviour(this.myAgent,list_agentNames));
-				this.myAgent.addBehaviour(new UpdateWumpusBehaviour(this.myAgent));
 				this.myAgent.addBehaviour(new IAmHereBehaviour(this.myAgent,list_agentNames,this.myMap));
+				if(((ExploreCoopAgent)this.myAgent).finish) this.myAgent.addBehaviour(new UpdateWumpusBehaviour(this.myAgent));
 				
 				String nearAgent = ((ExploreCoopAgent)this.myAgent).nearAgent ;
 				String tmpPos = ((ExploreCoopAgent)this.myAgent).getWumpusPos();
+				java.util.Map<String, String> agents =((ExploreCoopAgent)this.myAgent).nearAgents;
 				
 				if (!((ExploreCoopAgent)this.myAgent).mov && tmpPos!=null) 
-					if (nearAgent!=null && nextNode!=null && nextNode.compareTo(nearAgent)==0)
+					if (nearAgent!=null && nextNode!=null/* && nextNode.compareTo(nearAgent)==0*/)
 					{
-						((ExploreCoopAgent)this.myAgent).smell = false ; //the next position of the agent is the other agent so he will recieve the true position of the wumpus of him , so stop smelling to go for it
-						((ExploreCoopAgent)this.myAgent).wumpusFound = false ; //wumpus non trouvé car c'est juste un autre agent
-						((ExploreCoopAgent)this.myAgent).setWumpusPos(null) ;
-					}
-					else if(nextNode!=null && nextNode.compareTo(tmpPos)==0){
-						((ExploreCoopAgent)this.myAgent).wumpusFound = true ; //wumpus trouvé
+						boolean near = false ;
+						for (String nearAgen:agents.values()) {
+							if (nearAgen!= null) if(nextNode.compareTo(nearAgen)==0) near = true;
+						}
+						if(near) {
+							System.out.println(this.myAgent.getLocalName()+" found an agent already hunting at " + nearAgent);
+							((ExploreCoopAgent)this.myAgent).smell = false ; //the next position of the agent is the other agent so he will recieve the true position of the wumpus of him , so stop smelling to go for it
+							((ExploreCoopAgent)this.myAgent).wumpusFound = false ; //wumpus non trouvé car c'est juste un autre agent
+							((ExploreCoopAgent)this.myAgent).setWumpusPos(null) ;
+						}
+						else if(nextNode.compareTo(tmpPos)==0){
+							System.out.println(this.myAgent.getLocalName()+" found a golem at " + tmpPos);
+							((ExploreCoopAgent)this.myAgent).wumpusFound = true ; //wumpus trouvé
+						}
 					}
 				if (nearAgent!=null && nextNode!=null && tmpPos != null && ((ExploreCoopAgent)this.myAgent).finish) {
-					nextNode = this.myMap.getPathWithoutPassingByNearAgents(nearAgent,tmpPos ,myPosition); //aller au wumpus sans passer par l'autre agent
+					nextNode = this.myMap.getPathWithoutPassingByNearAgents(agents,tmpPos ,myPosition); //aller au wumpus sans passer par les autres agents
 				}
 				if (nextNode!=null) ((ExploreCoopAgent)this.myAgent).mov = ((AbstractDedaleAgent)this.myAgent).moveTo(nextNode);
 				else ((ExploreCoopAgent)this.myAgent).mov = false ;
