@@ -173,7 +173,7 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 									nextNode = this.myMap.getShortestPath(myPosition,tmpPos).get(0);
 									}
 									catch(Exception ex) {
-										((ExploreCoopAgent)this.myAgent).setWumpusPos(null) ;
+										//((ExploreCoopAgent)this.myAgent).setWumpusPos(null) ;
 									}
 							}
 							}
