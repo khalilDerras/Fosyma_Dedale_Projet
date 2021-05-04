@@ -98,7 +98,7 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 			 * Just added here to let you see what the agent is doing, otherwise he will be too quick
 			 */
 			try {
-				//this.myAgent.doWait(50);
+				this.myAgent.doWait(500);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -131,7 +131,7 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 					//no directly accessible openNode
 					//chose one, compute the path and take the first step.
 					String tmpPos = ((ExploreCoopAgent)this.myAgent).getWumpusPos();
-						if(!((ExploreCoopAgent)this.myAgent).finish) {
+						if(!((ExploreCoopAgent)this.myAgent).finish && tmpPos == null) {
 						int rand=((ExploreCoopAgent)this.myAgent).getRandom();
 						if(rand>0) {
 							nextNode = ((ExploreCoopAgent)this.myAgent).getRandomDirect();
@@ -173,7 +173,7 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 									nextNode = this.myMap.getShortestPath(myPosition,tmpPos).get(0);
 									}
 									catch(Exception ex) {
-										//((ExploreCoopAgent)this.myAgent).setWumpusPos(null) ;
+										((ExploreCoopAgent)this.myAgent).setWumpusPos(null) ;
 									}
 							}
 							}
@@ -183,7 +183,7 @@ public class ExploCoopBehaviour extends SimpleBehaviour {
 				}
 				this.myAgent.addBehaviour(new PingBehaviour(this.myAgent,list_agentNames));
 				this.myAgent.addBehaviour(new IAmHereBehaviour(this.myAgent,list_agentNames,this.myMap));
-				if(((ExploreCoopAgent)this.myAgent).finish) this.myAgent.addBehaviour(new UpdateWumpusBehaviour(this.myAgent));
+				this.myAgent.addBehaviour(new UpdateWumpusBehaviour(this.myAgent));
 				
 				String nearAgent = ((ExploreCoopAgent)this.myAgent).nearAgent ;
 				String tmpPos = ((ExploreCoopAgent)this.myAgent).getWumpusPos();
